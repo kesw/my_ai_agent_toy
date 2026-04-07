@@ -1,5 +1,6 @@
 crewai
-langchain_openai
+crewai-tools
+langchain-community
 duckduckgo-search
 python-dotenv
 litellm

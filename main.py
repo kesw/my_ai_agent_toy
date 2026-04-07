@@ -1,42 +1,51 @@
 import os
-from crewai import Agent, Task, Crew
 from dotenv import load_dotenv
+from crewai import Agent, Task, Crew
+from crewai.tools import BaseTool # 引入 BaseTool
+from langchain_community.tools import DuckDuckGoSearchRun
 
-# 1. 基礎設定
-# 請確定這裡填入的是你在 Groq 官網申請到的 gsk_ 開頭的那串
 load_dotenv()
-# os.environ["GROQ_API_KEY"] = "API_KEY_GOES_HERE"  # 替換成你的 API Key
 os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
 
-# 2. 定義模型（加上 groq/ 前綴）
-# 注意：如果你剛安裝完 litellm，這裡就能正常運作了
-my_llm = "groq/llama-3.3-70b-versatile"
+# 1. 定義一個自定義工具類別 (這就是資工系的專業寫法！)
+class MySearchTool(BaseTool):
+    name: str = "Search Tool"
+    description: str = "當你需要搜尋網路以獲取最新資訊時非常有用。"
 
-# 3. 創造 Agent
+    def _run(self, query: str) -> str:
+        # 這裡呼叫真正的搜尋功能
+        search = DuckDuckGoSearchRun()
+        return search.run(query)
+
+# 2. 實例化你的工具
+search_tool = MySearchTool()
+
+# 3. 交給 Agent
 researcher = Agent(
-  role='AI 新聞偵探',
-  goal='找出關於 {topic} 的最新三大消息',
-  backstory='你是一位熱愛科技的偵探，最擅長在網路上挖掘最新資訊。',
-  llm=my_llm,
-  verbose=True,
-  allow_delegation=False # 先關閉「委派功能」，跑起來更穩定
+    role='資深技術分析師',
+    goal='搜尋關於 {topic} 的最新趨勢',
+    backstory='你擅長從網路搜尋結果中提取關鍵資訊。',
+    llm="groq/llama-3.3-70b-versatile",
+    tools=[search_tool], 
+    verbose=True
 )
 
 # 4. 定義任務
-task = Task(
-  description='請列出三個關於 {topic} 的最新重點。',
+research_task = Task(
+  description='使用搜尋工具，針對 {topic} 進行深入調查，並列出三個最關鍵的最新發展。',
   agent=researcher,
-  expected_output='三點繁體中文的條列式報告。'
+  expected_output='一份包含來源參考的繁體中文趨勢簡報。'
 )
 
-# 5. 組建小隊並執行
+# 5. 組建 Crew 並執行
 crew = Crew(
-    agents=[researcher], 
-    tasks=[task]
+  agents=[researcher],
+  tasks=[research_task],
+  verbose=True
 )
 
-print("### 正在啟動 AI Agent，請稍候... ###")
-result = crew.kickoff(inputs={'topic': 'AI Agent 2026 最新趨勢'})
+print("### Agent 正在上網連線中... ###")
+result = crew.kickoff(inputs={'topic': 'AI Agent News?'})
 
-# print("\n\n--- 這是你的 Agent 跑出來的成果 ---")
-# print(result)
+print("\n\n--- 聯網搜尋結果 ---")
+print(result)
