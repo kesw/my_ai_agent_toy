@@ -49,8 +49,10 @@ Bash
 python main.py
 
 📈 未來展望 (Future Roadmap)
-[ ] 聯網能力：整合 duckduckgo-search 工具，讓 Agent 具備即時搜尋網路資訊的能力。
+[v] 聯網能力：整合 duckduckgo-search 工具，讓 Agent 具備即時搜尋網路資訊的能力。
+## lang-chain  BaseTool
 
-[ ] 多智能體協作：新增「校稿員 (Reviewer)」角色，提升輸出報告的專業度與準確性。
+[v] 多智能體協作：新增「校稿員 (Reviewer)」角色，提升輸出報告的專業度與準確性。
+## another agent, sequential workflow -> Hallucination--
 
 [ ] Web 介面：使用 Streamlit 建立簡單的 GUI 介面供非技術人員使用。
