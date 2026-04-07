@@ -1,0 +1,15 @@
+# 1. 擋掉虛擬環境（這最重要，不然 GitHub 會爆炸）
+.venv/
+venv/
+env/
+
+# 2. 擋掉你的 API Key 秘密檔案
+.env
+
+# 3. 擋掉 Python 自動產生的緩存
+__pycache__/
+*.pyc
+
+# 4. 擋掉 Mac 或 Windows 的系統垃圾檔
+.DS_Store
+Thumbs.db
